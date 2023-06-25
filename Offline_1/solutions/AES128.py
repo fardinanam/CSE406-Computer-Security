@@ -2,10 +2,11 @@ import numpy as np
 import sbox as sb
 from consts import *
 
-KEY_SIZE = 128
+BLOCK_SIZE_BITS = 128
+BLOCK_SIZE_BYTES = int(BLOCK_SIZE_BITS / 8)
 WORD_ARRAY_SIZE = 4
-WORD_SIZE = int(KEY_SIZE / WORD_ARRAY_SIZE)
-COLUMN_SIZE = int(KEY_SIZE / WORD_SIZE)
+WORD_SIZE = int(BLOCK_SIZE_BITS / WORD_ARRAY_SIZE)
+COLUMN_SIZE = int(BLOCK_SIZE_BITS / WORD_SIZE)
 
 
 def stringToHex(string: str) -> list:
@@ -236,16 +237,45 @@ def invMixColumn(stateMat: list) -> list:
   return newStateMatrix
 
 
-def aesEncrypt(plainText: str, keyText: str) -> str:
+def pad(text: str) -> str:
   """
-  Performs the AES cipher on the given text with the given keys. The provided plain text and key texts are converted to 128 bit hex values.
+  Pads the text to be a multiple of 16 bytes with the number of bytes added
+  """
+  padLength = BLOCK_SIZE_BYTES - len(text) % BLOCK_SIZE_BYTES
+
+  if padLength == 0:
+    return text
+
+  return text + chr(padLength) * padLength
+
+
+def unpad(text: str) -> str:
+  """
+  Removes the padding from the text
+  """
+  padLength = ord(text[-1])
+  paddedText = text[-padLength:]
+
+  if padLength == 0 or padLength > BLOCK_SIZE_BYTES or paddedText != chr(padLength) * padLength:
+    return text
+
+  return text[:-padLength]
+
+
+def aesEncryptOneBlock(plainText: str, keys: list) -> str:
+  """
+  Performs the AES cipher on the given text with the given keys. The provided plain text and key texts are assumed to be 128 bits of hex values.
 
   args: plainText: str - the text to encrypt
-        keyText: str - the key to encrypt the text with 
+        keys: list - the list containing the round keys
   
   returns: cipherText: str - the encrypted text
+
+  raises: ValueError - if the plain text is not 128 bits
   """
-  keys = createAllKeys(keyText)
+
+  if len(plainText) != BLOCK_SIZE_BYTES:
+    raise ValueError("The plain text must be 128 bits")
 
   stateMat = stateMatrix(plainText)
   stateMat = addRoundKey(stateMat, keys[0])
@@ -273,16 +303,38 @@ def aesEncrypt(plainText: str, keyText: str) -> str:
   return cipherText
 
 
-def aesDecrypt(cipherText: str, keyText: str) -> str:
+def aesEncrypt(plainText: str, keyText: str) -> str:
   """
-  Performs the AES cipher on the given text with the given keys. The provided plain text and key texts are converted to 128 bit hex values.
+  Performs the AES cipher on the given text with the given key
+
+  args: plainText: str - the text to encrypt
+        keyText: str - the key to use for encryption
+
+  returns: cipherText: str - the encrypted text
+  """
+
+  plainText = pad(plainText)
+  keys = createAllKeys(keyText)
+
+  cipherText = ""
+  for i in range(0, len(plainText), BLOCK_SIZE_BYTES):
+    cipherText += aesEncryptOneBlock(plainText[i:i + BLOCK_SIZE_BYTES], keys)
+
+  return cipherText
+
+
+def aesDecryptOneBlock(cipherText: str, keys: list) -> str:
+  """
+  Performs the AES cipher on the given text with the given keys. The provided cipher text is assumed to be 128 bits of hex values.
 
   args: cipherText: str - the text to decrypt
-        keyText: str - the key to decrypt the text with 
+        keys: list - the list containing the round keys
   
   returns: plainText: str - the decrypted text
   """
-  keys = createAllKeys(keyText)
+
+  if len(cipherText) != BLOCK_SIZE_BYTES * 2:
+    raise ValueError("The cipher text must be 32 bytes")
 
   stateMat = invStateMatrix(cipherText)
   stateMat = addRoundKey(stateMat, keys[10])
@@ -301,13 +353,36 @@ def aesDecrypt(cipherText: str, keyText: str) -> str:
   hexValue = ""
   for i in range(WORD_ARRAY_SIZE):
     for j in range(COLUMN_SIZE):
-      hexValue += stateMat[j][i][2:]
+      elemHexValue = stateMat[j][i][2:]
+      if len(elemHexValue) == 1:
+        elemHexValue = "0" + elemHexValue
+      hexValue += elemHexValue
 
   #  Convert the hex value to ascii
   plainText = bytearray.fromhex(hexValue).decode()
   return plainText
 
 
-cipherText = aesEncrypt("Two One Nine Two", "Thats my Kung Fu")
+def aesDecrypt(cipherText: str, keyText: str) -> str:
+  """
+  Performs the AES cipher on the given text with the given key
+
+  args: cipherText: str - the text to decrypt
+        keyText: str - the key to use for decryption
+
+  returns: plainText: str - the decrypted text
+  """
+  cipherTextBlockSize = BLOCK_SIZE_BYTES * 2
+  keys = createAllKeys(keyText)
+
+  plainText = ""
+  for i in range(0, len(cipherText), cipherTextBlockSize):
+    plainText += aesDecryptOneBlock(
+        cipherText[i:i + cipherTextBlockSize], keys)
+
+  return unpad(plainText)
+
+
+cipherText = aesEncrypt("Two One Nine Two Five Nine Two Three Hello", "Thats my Kung Fu")
 print(cipherText)
 print(aesDecrypt(cipherText, "Thats my Kung Fu"))
