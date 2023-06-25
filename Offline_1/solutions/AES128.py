@@ -381,8 +381,3 @@ def aesDecrypt(cipherText: str, keyText: str) -> str:
         cipherText[i:i + cipherTextBlockSize], keys)
 
   return unpad(plainText)
-
-
-cipherText = aesEncrypt("Two One Nine Two Five Nine Two Three Hello", "Thats my Kung Fu")
-print(cipherText)
-print(aesDecrypt(cipherText, "Thats my Kung Fu"))
