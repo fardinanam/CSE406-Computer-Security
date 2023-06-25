@@ -1,6 +1,8 @@
 import numpy as np
 import sbox as sb
+import time
 from consts import *
+from logger import Logger
 
 BLOCK_SIZE_BITS = 128
 BLOCK_SIZE_BYTES = int(BLOCK_SIZE_BITS / 8)
@@ -8,6 +10,11 @@ WORD_ARRAY_SIZE = 4
 WORD_SIZE = int(BLOCK_SIZE_BITS / WORD_ARRAY_SIZE)
 COLUMN_SIZE = int(BLOCK_SIZE_BITS / WORD_SIZE)
 
+logger = Logger()
+
+keySchedulingTime = 0
+encryptionTime = 0
+decryptionTime = 0
 
 def stringToHex(string: str) -> list:
   """
@@ -312,13 +319,30 @@ def aesEncrypt(plainText: str, keyText: str) -> str:
 
   returns: cipherText: str - the encrypted text
   """
+  logger.log("Plain Text: ")
+  logger.log("In ASCII: " + plainText)
+  logger.log("In Hex: " + plainText.encode("utf-8").hex())
+  logger.log("")
+
+  logger.log("Key: ")
+  logger.log("In ASCII: " + keyText)
+  logger.log("In Hex: " + keyText.encode("utf-8").hex())
+  logger.log("")
 
   plainText = pad(plainText)
+
+  keySchedulingTime = time.time()
   keys = createAllKeys(keyText)
+  keySchedulingTime = time.time() - keySchedulingTime
 
   cipherText = ""
   for i in range(0, len(plainText), BLOCK_SIZE_BYTES):
     cipherText += aesEncryptOneBlock(plainText[i:i + BLOCK_SIZE_BYTES], keys)
+
+  logger.log("Cipher Text: ")
+  logger.log("In Hex: " + cipherText)
+  # logger.log("In ASCII: " + bytearray.fromhex(cipherText).decode())
+  logger.log("")
 
   return cipherText
 
@@ -360,6 +384,7 @@ def aesDecryptOneBlock(cipherText: str, keys: list) -> str:
 
   #  Convert the hex value to ascii
   plainText = bytearray.fromhex(hexValue).decode()
+
   return plainText
 
 
@@ -380,4 +405,12 @@ def aesDecrypt(cipherText: str, keyText: str) -> str:
     plainText += aesDecryptOneBlock(
         cipherText[i:i + cipherTextBlockSize], keys)
 
-  return unpad(plainText)
+  plainText = unpad(plainText)
+
+  logger.log("Decrypted Text: ")
+  logger.log("In Hex: " + plainText.encode("utf-8").hex())
+  logger.log("In ASCII: " + plainText)
+  logger.log("")
+
+  return plainText
+
