@@ -250,7 +250,7 @@ def pad(text: str) -> str:
   """
   padLength = BLOCK_SIZE_BYTES - len(text) % BLOCK_SIZE_BYTES
 
-  if padLength == 0:
+  if padLength == 0 or padLength == BLOCK_SIZE_BYTES:
     return text
 
   return text + chr(padLength) * padLength
@@ -299,9 +299,14 @@ def aesEncryptOneBlock(plainText: str, keys: list) -> str:
 
   #  Convert the matrix to a string of hex values without the 0x prefix
   cipherText = ""
+
   for i in range(WORD_ARRAY_SIZE):
     for j in range(COLUMN_SIZE):
-      extractedHex = stateMat[j][i][2:]
+      extractedHex = stateMat[j][i]
+
+      if extractedHex.startswith("0x"):
+        extractedHex = extractedHex[2:]
+
       if len(extractedHex) == 1:
         extractedHex = "0" + extractedHex
 
@@ -341,7 +346,7 @@ def aesEncrypt(plainText: str, keyText: str) -> str:
 
   logger.log("Cipher Text: ")
   logger.log("In Hex: " + cipherText)
-  # logger.log("In ASCII: " + bytearray.fromhex(cipherText).decode())
+  logger.log("In ASCII: " + BitVector(hexstring=cipherText).get_bitvector_in_ascii())
   logger.log("")
 
   return cipherText

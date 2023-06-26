@@ -2,7 +2,7 @@ from AES128 import *
 
 if __name__ == "__main__":
   key = "BUET CSE18 Batch"
-
+  # logger.setIsLogging(False)
   encryptionTime = time.time()
   cipherText = aesEncrypt("Can They Do This", key)
   encryptionTime = time.time() - encryptionTime
@@ -11,7 +11,7 @@ if __name__ == "__main__":
   aesDecrypt(cipherText, key)
   decryptionTime = time.time() - decryptionTime
 
-  logger.log("Key Scheduling Time: " + str(keySchedulingTime) + " seconds")
-  logger.log("Encryption Time: " + str(encryptionTime) + " seconds")
-  logger.log("Decryption Time: " + str(decryptionTime) + " seconds")
+  print("Key Scheduling Time: " + str(keySchedulingTime) + " seconds")
+  print("Encryption Time: " + str(encryptionTime) + " seconds")
+  print("Decryption Time: " + str(decryptionTime) + " seconds")
 
