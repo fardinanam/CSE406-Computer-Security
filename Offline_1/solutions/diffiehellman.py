@@ -72,7 +72,6 @@ def powmod(a, b, p):
 
 def generator(p, factors, minimum, maximum):
   phi = p - 1
-  n = phi
 
   for res in range(minimum, maximum + 1):
     ok = True

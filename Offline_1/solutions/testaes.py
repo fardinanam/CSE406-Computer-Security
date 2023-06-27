@@ -1,17 +1,23 @@
 from AES128 import *
+from bcolors import bcolors
 
-if __name__ == "__main__":
-  key = "BUET CSE18 Batch"
-  # logger.setIsLogging(False)
-  encryptionTime = time.time()
-  cipherText = aesEncrypt("Can They Do This", key)
-  encryptionTime = time.time() - encryptionTime
+logger.setIsLogging(True)
 
-  decryptionTime = time.time()
-  aesDecrypt(cipherText, key)
-  decryptionTime = time.time() - decryptionTime
+print(f'{bcolors.BOLD}{bcolors.OKCYAN}Write the key...{bcolors.ENDC}')
+key = input()
 
-  print("Key Scheduling Time: " + str(keySchedulingTime) + " seconds")
-  print("Encryption Time: " + str(encryptionTime) + " seconds")
-  print("Decryption Time: " + str(decryptionTime) + " seconds")
+print(f'{bcolors.BOLD}{bcolors.OKCYAN}Write the plaintext...{bcolors.ENDC}')
+plaintext = input()
+
+encryptionTime = time.time()
+cipherText = aesEncrypt(plaintext, key)
+encryptionTime = time.time() - encryptionTime
+
+decryptionTime = time.time()
+aesDecrypt(cipherText, key)
+decryptionTime = time.time() - decryptionTime
+
+print("Key Scheduling Time: " + str(keySchedulingTime) + " seconds")
+print("Encryption Time: " + str(encryptionTime) + " seconds")
+print("Decryption Time: " + str(decryptionTime) + " seconds")
 
