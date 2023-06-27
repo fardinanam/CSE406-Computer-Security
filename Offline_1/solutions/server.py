@@ -6,7 +6,7 @@ from bcolors import bcolors
 PORT = 12345
 
 s = socket.socket()
-s.bind(('', PORT))
+s.bind(('localhost', PORT))
 
 s.listen(5)
 

@@ -5,10 +5,10 @@ from consts import *
 from logger import Logger
 
 BLOCK_SIZE_BITS = 128
-BLOCK_SIZE_BYTES = int(BLOCK_SIZE_BITS / 8)
-WORD_ARRAY_SIZE = 4
-WORD_SIZE = int(BLOCK_SIZE_BITS / WORD_ARRAY_SIZE)
-COLUMN_SIZE = int(BLOCK_SIZE_BITS / WORD_SIZE)
+BLOCK_SIZE_BYTES = BLOCK_SIZE_BITS // 8
+WORD_SIZE = 4
+WORD_ARRAY_SIZE = BLOCK_SIZE_BYTES // WORD_SIZE
+COLUMN_SIZE = BLOCK_SIZE_BYTES // WORD_ARRAY_SIZE
 
 logger = Logger(False)
 
@@ -80,14 +80,14 @@ def roundKey(round: int, prevkey: list) -> list:
   return w
 
 
-def convertTo128Bits(text: str) -> str:
+def convertToBlockSize(text: str) -> str:
   """
   Converts the given key to 128 bits
   """
-  if len(text) > 16:
-    return text[:16]
-  elif len(text) < 16:
-    return text + "0" * (16 - len(text))
+  if len(text) > BLOCK_SIZE_BYTES:
+    return text[:BLOCK_SIZE_BYTES]
+  elif len(text) < BLOCK_SIZE_BYTES:
+    return text + "0" * (BLOCK_SIZE_BYTES - len(text))
 
   return text
 
@@ -96,7 +96,7 @@ def createAllKeys(text: str) -> list:
   """
   Generates all round keys from the initial key
   """
-  text = convertTo128Bits(text)
+  text = convertToBlockSize(text)
   keys = [textToMatrix(text)]
   for i in range(10):
     keys.append(roundKey(i+1, keys[i]))
@@ -110,7 +110,7 @@ def stateMatrix(text: str) -> list:
     If the text is less than 128 bits, it is padded with 0s. If it is greater than 128 bits,
     it is truncated to 128 bits.
   """
-  text = convertTo128Bits(text)
+  text = convertToBlockSize(text)
   matrix = textToMatrix(text)
 
   return np.array(matrix).T.tolist()
@@ -246,7 +246,7 @@ def invMixColumn(stateMat: list) -> list:
 
 def pad(text: str) -> str:
   """
-  Pads the text to be a multiple of 16 bytes with the number of bytes added
+  Pads the text to be a multiple of block size with the number of bytes added
   """
   padLength = BLOCK_SIZE_BYTES - len(text) % BLOCK_SIZE_BYTES
 
@@ -278,11 +278,11 @@ def aesEncryptOneBlock(plainText: str, keys: list) -> str:
   
   returns: cipherText: str - the encrypted text
 
-  raises: ValueError - if the plain text is not 128 bits
+  raises: ValueError - if the plain text is not equal to block size
   """
 
   if len(plainText) != BLOCK_SIZE_BYTES:
-    raise ValueError("The plain text must be 128 bits")
+    raise ValueError(f"The plain text must be {BLOCK_SIZE_BYTES} bytes")
 
   stateMat = stateMatrix(plainText)
   stateMat = addRoundKey(stateMat, keys[0])
@@ -367,7 +367,7 @@ def aesDecryptOneBlock(cipherText: str, keys: list) -> str:
   """
 
   if len(cipherText) != BLOCK_SIZE_BYTES * 2:
-    raise ValueError("The cipher text must be 32 bytes")
+    raise ValueError(f"The cipher text must be {BLOCK_SIZE_BYTES * 2} bytes")
 
   stateMat = invStateMatrix(cipherText)
   stateMat = addRoundKey(stateMat, keys[10])
