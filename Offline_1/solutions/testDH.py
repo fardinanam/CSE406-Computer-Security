@@ -1,6 +1,7 @@
 import time
 from diffiehellman import *
 from bcolors import bcolors
+import tabulate
 
 def computationTime(k: int):
   timeForP = time.time()
@@ -53,7 +54,7 @@ def generateComputationTimeAvg(k: int, i: int):
   timeForAAvg /= i
   timeForKeyAvg /= i
 
-  return timeForPAvg, timeForGAvg, timeForaAvg, timeForAAvg, timeForKeyAvg
+  return [timeForPAvg, timeForGAvg, timeForaAvg, timeForAAvg, timeForKeyAvg]
 
 
 
@@ -66,6 +67,8 @@ a = generatePrime(k // 2)
 b = generatePrime(k // 2)
 A = powmod(g, a, p)
 B = powmod(g, b, p)
+A_b = powmod(A, b, p)
+B_a = powmod(B, a, p)
 
 print(f'{bcolors.OKGREEN}Generated p:{bcolors.ENDC} {p}')
 print(f'{bcolors.OKGREEN}Generated g:{bcolors.ENDC} {g}')
@@ -73,10 +76,13 @@ print(f'{bcolors.OKGREEN}Generated a:{bcolors.ENDC} {a}')
 print(f'{bcolors.OKGREEN}Generated b:{bcolors.ENDC} {b}')
 print(f'{bcolors.OKGREEN}Generated A:{bcolors.ENDC} {A}')
 print(f'{bcolors.OKGREEN}Generated B:{bcolors.ENDC} {B}')
+print()
+print(f'{bcolors.OKGREEN}A^b:{bcolors.ENDC} {A_b}')
+print(f'{bcolors.OKGREEN}B^a:{bcolors.ENDC} {B_a}')
 
 print()
 
-if powmod(A, b, p) == powmod(B, a, p):
+if A_b == B_a:
   print(f'{bcolors.OKGREEN}{bcolors.BOLD}A^b and B^a are equal{bcolors.ENDC}')
 else:
   print(f'{bcolors.WARNING}{bcolors.BOLD}A^b and B^a are not equal{bcolors.ENDC}')
@@ -85,9 +91,12 @@ else:
 # generate report in tabular form
 print('Generating execution times\n')
 
-print(f'{bcolors.BOLD}{bcolors.OKCYAN}k\t\t\t\tComputation Time For{bcolors.ENDC}')
-print(f'{bcolors.OKGREEN}\tP\t\t\tg\t\t\ta\t\t\tA\t\t\tShared Key{bcolors.ENDC}')
+print(f'{bcolors.BOLD}{bcolors.OKCYAN}\t\t\tComputation Times{bcolors.ENDC}')
 
+output = []
 for k in [128, 192, 256]:
-  timeForP, timeForG, timeFora, timeForA, timeForKey = generateComputationTimeAvg(k, 5)
-  print(f'{bcolors.OKGREEN}{k}{bcolors.ENDC}\t{timeForP}\t{timeForG}\t{timeFora}\t{timeForA}\t\t{timeForKey}')
+  out = generateComputationTimeAvg(k, 5)
+  out.insert(0, k)
+  output.append(out)
+
+print(tabulate.tabulate(output, headers=['k', 'P', 'g', 'a', 'A', 'Shared Key'], tablefmt='psql'))
