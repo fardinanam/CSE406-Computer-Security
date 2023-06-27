@@ -6,7 +6,7 @@ from bcolors import bcolors
 
 PORT = 12345
 
-s = socket.socket()
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 s.connect(('localhost', PORT))
 print('Connected to server!')
