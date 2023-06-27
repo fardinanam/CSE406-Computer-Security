@@ -1,6 +1,6 @@
 import numpy as np
-import sbox as sb
 import time
+import sbox as sb
 from consts import *
 from logger import Logger
 

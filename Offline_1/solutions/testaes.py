@@ -17,7 +17,7 @@ decryptionTime = time.time()
 aesDecrypt(cipherText, key)
 decryptionTime = time.time() - decryptionTime
 
-print("Key Scheduling Time: " + str(keySchedulingTime) + " seconds")
-print("Encryption Time: " + str(encryptionTime) + " seconds")
-print("Decryption Time: " + str(decryptionTime) + " seconds")
-
+print(f"{bcolors.OKGREEN}Key Scheduling Time:{bcolors.ENDC} " + str(keySchedulingTime) + " seconds")
+print(f"{bcolors.OKGREEN}Encryption Time:{bcolors.ENDC} " +
+      str(encryptionTime) + " seconds")
+print(f"{bcolors.OKGREEN}Decryption Time:{bcolors.ENDC} " + str(decryptionTime) + " seconds")

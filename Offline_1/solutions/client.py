@@ -10,6 +10,7 @@ s = socket.socket()
 
 s.connect(('localhost', PORT))
 print('Connected to server!')
+print('Waiting for p, g, A from server...')
 
 p = int(s.recv(1024))
 g = int(s.recv(1024))
