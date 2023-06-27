@@ -35,12 +35,26 @@ def generatePrime(bits):
   Generates a prime number which is atleast as large as the given number of bits.
   
   args:
-    bits: The number of bits the prime number should be.
+    bits: The number of bits of the prime number.
   """
   while True:
     n = random.getrandbits(bits)
     if millerRabinPrimalityTest(n, 2):
       return n
+    
+def generatePrimeAndFactors(bits: int) -> list:
+  """
+  Generates a prime number which is atleast as large as the given number of bits.
+
+  returns: [prime, [factors]] A prime number and its factors.
+  """
+  factor = generatePrime(bits - 1)
+
+  while True:
+    prime = (factor << 1) + 1
+    if millerRabinPrimalityTest(prime, 2):
+      return prime, [2, factor]
+    factor = generatePrime(bits - 1)
 
 
 def powmod(a, b, p):
@@ -56,33 +70,15 @@ def powmod(a, b, p):
 
 
 
-def generator(p, minimum, maximum):
-  fact = []
+def generator(p, factors, minimum, maximum):
   phi = p - 1
   n = phi
 
-  i = 2
-  while i * i <= n:
-    if n % i == 0:
-      fact.append(i)
-      while n % i == 0:
-        n //= i
-    i += 1
-
-  if n > 1:
-    fact.append(n)
-
   for res in range(minimum, maximum + 1):
     ok = True
-    for i in range(len(fact)):
-      ok &= powmod(res, phi // fact[i], p) != 1
+    for i in range(len(factors)):
+      ok &= powmod(res, phi // factors[i], p) != 1
     if ok:
       return res
 
   return -1
-
-
-p = generatePrime(128)
-print("Generated prime:", p)
-g = generator(p, 2, p-1)
-print("Generator:", g)

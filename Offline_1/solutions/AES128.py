@@ -10,7 +10,7 @@ WORD_ARRAY_SIZE = 4
 WORD_SIZE = int(BLOCK_SIZE_BITS / WORD_ARRAY_SIZE)
 COLUMN_SIZE = int(BLOCK_SIZE_BITS / WORD_SIZE)
 
-logger = Logger()
+logger = Logger(False)
 
 keySchedulingTime = 0
 encryptionTime = 0
@@ -324,6 +324,10 @@ def aesEncrypt(plainText: str, keyText: str) -> str:
 
   returns: cipherText: str - the encrypted text
   """
+  # convert plain text and key text to strings to be safe
+  plainText = str(plainText)
+  keyText = str(keyText)
+
   logger.log("Plain Text: ")
   logger.log("In ASCII: " + plainText)
   logger.log("In Hex: " + plainText.encode("utf-8").hex())
@@ -402,6 +406,10 @@ def aesDecrypt(cipherText: str, keyText: str) -> str:
 
   returns: plainText: str - the decrypted text
   """
+  # convert plain text and key text to strings to be safe
+  cipherText = str(cipherText)
+  keyText = str(keyText)
+  
   cipherTextBlockSize = BLOCK_SIZE_BYTES * 2
   keys = createAllKeys(keyText)
 
