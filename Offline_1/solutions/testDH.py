@@ -1,4 +1,5 @@
 import time
+from primeutils import generatePrime
 from diffiehellman import *
 from bcolors import bcolors
 import tabulate
@@ -70,15 +71,15 @@ B = powmod(g, b, p)
 A_b = powmod(A, b, p)
 B_a = powmod(B, a, p)
 
-print(f'{bcolors.OKGREEN}Generated p:{bcolors.ENDC} {p}')
-print(f'{bcolors.OKGREEN}Generated g:{bcolors.ENDC} {g}')
-print(f'{bcolors.OKGREEN}Generated a:{bcolors.ENDC} {a}')
-print(f'{bcolors.OKGREEN}Generated b:{bcolors.ENDC} {b}')
-print(f'{bcolors.OKGREEN}Generated A:{bcolors.ENDC} {A}')
-print(f'{bcolors.OKGREEN}Generated B:{bcolors.ENDC} {B}')
+print(f'Generated p: {bcolors.OKGREEN}{p}{bcolors.ENDC}')
+print(f'Generated g: {bcolors.OKGREEN}{g}{bcolors.ENDC}')
+print(f'Generated a: {bcolors.OKGREEN}{a}{bcolors.ENDC}')
+print(f'Generated b: {bcolors.OKGREEN}{b}{bcolors.ENDC}')
+print(f'Generated A: {bcolors.OKGREEN}{A}{bcolors.ENDC}')
+print(f'Generated B: {bcolors.OKGREEN}{B}{bcolors.ENDC}')
 print()
-print(f'{bcolors.OKGREEN}A^b:{bcolors.ENDC} {A_b}')
-print(f'{bcolors.OKGREEN}B^a:{bcolors.ENDC} {B_a}')
+print(f'A^b: {bcolors.OKGREEN}{A_b}{bcolors.ENDC}')
+print(f'B^a: {bcolors.OKGREEN}{B_a}{bcolors.ENDC}')
 
 print()
 

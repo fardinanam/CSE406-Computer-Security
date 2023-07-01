@@ -3,6 +3,7 @@ import time
 import sbox as sb
 from consts import *
 from logger import Logger
+from bcolors import bcolors
 
 BLOCK_SIZE_BITS = 128
 BLOCK_SIZE_BYTES = BLOCK_SIZE_BITS // 8
@@ -328,14 +329,14 @@ def aesEncrypt(plainText: str, keyText: str) -> str:
   plainText = str(plainText)
   keyText = str(keyText)
 
-  logger.log("Plain Text: ")
-  logger.log("In ASCII: " + plainText)
-  logger.log("In Hex: " + plainText.encode("utf-8").hex())
+  logger.log(f"{bcolors.OKCYAN}Plain Text: {bcolors.ENDC}")
+  logger.log(f"In ASCII: {bcolors.OKGREEN}" + plainText + f"{bcolors.ENDC}")
+  logger.log(f"In Hex: {bcolors.OKGREEN}" + plainText.encode("utf-8").hex() + f"{bcolors.ENDC}")
   logger.log("")
 
-  logger.log("Key: ")
-  logger.log("In ASCII: " + keyText)
-  logger.log("In Hex: " + keyText.encode("utf-8").hex())
+  logger.log(f"{bcolors.OKCYAN}Key: {bcolors.ENDC}")
+  logger.log(f"In ASCII: {bcolors.OKGREEN}" + keyText + f"{bcolors.ENDC}")
+  logger.log(f"In Hex: {bcolors.OKGREEN}" + keyText.encode("utf-8").hex() + f"{bcolors.ENDC}")
   logger.log("")
 
   plainText = pad(plainText)
@@ -348,9 +349,10 @@ def aesEncrypt(plainText: str, keyText: str) -> str:
   for i in range(0, len(plainText), BLOCK_SIZE_BYTES):
     cipherText += aesEncryptOneBlock(plainText[i:i + BLOCK_SIZE_BYTES], keys)
 
-  logger.log("Cipher Text: ")
-  logger.log("In Hex: " + cipherText)
-  logger.log("In ASCII: " + BitVector(hexstring=cipherText).get_bitvector_in_ascii())
+  logger.log(f"{bcolors.OKCYAN}Cipher Text: {bcolors.ENDC}")
+  logger.log(f"In Hex: {bcolors.OKGREEN}" + cipherText + f"{bcolors.ENDC}")
+  logger.log(f"In ASCII: {bcolors.OKGREEN}" + 
+        BitVector(hexstring=cipherText).get_bitvector_in_ascii() + f"{bcolors.ENDC}")
   logger.log("")
 
   return cipherText
@@ -420,9 +422,9 @@ def aesDecrypt(cipherText: str, keyText: str) -> str:
 
   plainText = unpad(plainText)
 
-  logger.log("Decrypted Text: ")
-  logger.log("In Hex: " + plainText.encode("utf-8").hex())
-  logger.log("In ASCII: " + plainText)
+  logger.log(f"{bcolors.OKCYAN}Decrypted Text: {bcolors.ENDC}")
+  logger.log(f"In Hex: {bcolors.OKGREEN}" + plainText.encode("utf-8").hex() + f"{bcolors.ENDC}")
+  logger.log(f"In ASCII: {bcolors.OKGREEN}" + plainText + f"{bcolors.ENDC}")
   logger.log("")
 
   return plainText

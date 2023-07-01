@@ -3,11 +3,10 @@ from bcolors import bcolors
 
 logger.setIsLogging(True)
 
-print(f'{bcolors.BOLD}{bcolors.OKCYAN}Write the key...{bcolors.ENDC}')
-key = input()
+key = input(f'{bcolors.BOLD}{bcolors.OKCYAN}Write the key: {bcolors.ENDC}')
 
-print(f'{bcolors.BOLD}{bcolors.OKCYAN}Write the plaintext...{bcolors.ENDC}')
-plaintext = input()
+plaintext = input(
+      f'{bcolors.BOLD}{bcolors.OKCYAN}Write the plaintext: {bcolors.ENDC}')
 
 encryptionTime = time.time()
 cipherText = aesEncrypt(plaintext, key)
@@ -17,7 +16,9 @@ decryptionTime = time.time()
 aesDecrypt(cipherText, key)
 decryptionTime = time.time() - decryptionTime
 
-print(f"{bcolors.OKGREEN}Key Scheduling Time:{bcolors.ENDC} " + str(keySchedulingTime) + " seconds")
-print(f"{bcolors.OKGREEN}Encryption Time:{bcolors.ENDC} " +
-      str(encryptionTime) + " seconds")
-print(f"{bcolors.OKGREEN}Decryption Time:{bcolors.ENDC} " + str(decryptionTime) + " seconds")
+print(f"Key Scheduling Time: {bcolors.OKGREEN}" +
+      str(keySchedulingTime) + f"{bcolors.ENDC} seconds")
+print(f"Encryption Time: {bcolors.OKGREEN}" +
+      str(encryptionTime) + f"{bcolors.ENDC} seconds")
+print(f"Decryption Time: {bcolors.OKGREEN}" +
+      str(decryptionTime) + f"{bcolors.ENDC} seconds")
