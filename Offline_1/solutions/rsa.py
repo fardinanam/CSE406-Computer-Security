@@ -1,6 +1,7 @@
 from primeutils import *
 import random
 import math
+import hashlib
 
 def extendedEuclidean(a: int, b: int) -> tuple:
   """
@@ -79,3 +80,15 @@ def decryptWithRSA(ciphertext: int, d: int, n: int) -> int:
   returns: The plaintext
   """
   return pow(ciphertext, d, n)
+
+def hashForAuth(message: str) -> int:
+  """
+  Hashes a message using SHA-1
+
+  args:
+    message: The message to hash
+
+  returns: The hashed message
+  """
+  message = str(message).encode()
+  return int(hashlib.sha1(message).hexdigest(), 16)

@@ -33,11 +33,21 @@ print(f'server_n:{bcolors.OKGREEN} {server_n}{bcolors.ENDC}')
 print('Waiting for p, g, A from server...')
 
 data = (s.recv(1024).decode()).split()
-p = int(data[0])
-g = int(data[1])
-A = int(data[2])
-
+signature = int(data[0])
+p = int(data[1])
+g = int(data[2])
+A = int(data[3])
 print('Received encrypted p, g, A from server!')
+
+# Authenticate server
+signature = encryptWithRSA(signature, server_e, server_n)
+hashedP = hashForAuth(p)
+if signature != hashedP:
+  print(f'{bcolors.FAIL}Server authentication failed!{bcolors.ENDC}')
+  exit(1)
+else:
+  print(f'{bcolors.OKCYAN}Server authentication successful!{bcolors.ENDC}')
+
 print('Decrypting p, g, A with private key...')
 p = decryptWithRSA(p, d, n)
 g = decryptWithRSA(g, d, n)
@@ -56,8 +66,12 @@ B = powmod(g, b, p)
 print('Generated B:', B)
 print('Sending B to server...')
 
+# send B to server
 encryptedB = encryptWithRSA(B, server_e, server_n)
-s.send(str(encryptedB).encode())
+signature = hashForAuth(encryptedB)
+signature = decryptWithRSA(signature, d, n)
+data = str(signature) + ' ' + str(encryptedB)
+s.send(data.encode())
 
 print('Generating key...')
 key = powmod(A, b, p)

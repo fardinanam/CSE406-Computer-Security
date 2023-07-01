@@ -58,11 +58,30 @@ while True:
   encryptedG = encryptWithRSA(g, client_e, client_n)
   encyptedA = encryptWithRSA(A, client_e, client_n)
 
-  data = str(encryptedP) + ' ' + str(encryptedG) + ' ' + str(encyptedA)
+  # generate signature using RSA for authentication
+  signature = hashForAuth(encryptedP)
+  print(f'encryptedP: {bcolors.FAIL}{encryptedP}{bcolors.ENDC}')
+  print(f'Hashed signature: {bcolors.FAIL}{signature}{bcolors.ENDC}')
+  signature = decryptWithRSA(signature, d, n)
+
+  # send signature, p, g, A to client
+  data = str(signature) + ' ' + str(encryptedP) + ' ' + str(encryptedG) + ' ' + str(encyptedA)
   conn.send(data.encode())
 
   print('Waiting for B from client...')
-  encryptedB = int(conn.recv(1024))
+  data = conn.recv(1024).decode().split()
+  signature = int(data[0])
+  encryptedB = int(data[1])
+
+  # verify signature
+  signature = encryptWithRSA(signature, client_e, client_n)
+  if signature != hashForAuth(encryptedB):
+    print(f'{bcolors.FAIL}Client authentication failed!{bcolors.ENDC}')
+    conn.close()
+    continue
+  else:
+    print(f'{bcolors.OKGREEN}Client authentication successful!{bcolors.ENDC}')
+
   B = decryptWithRSA(encryptedB, d, n)
   print('Received B:', B)
 
