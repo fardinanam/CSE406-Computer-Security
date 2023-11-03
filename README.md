@@ -21,10 +21,10 @@ run [server.py](Offline_1/solutions/server.py) and [client.py](Offline_1/solutio
 - **RSA Authentication**: While sending data from one to the other, there is no way for the receiver to know if the sender is actually the one whose data the receiver is expecting. RSA can be used to authenticate the sender. The sender can sign the data with its private key and the receiver can verify the signature with the sender's public key. Details can be found [here](https://en.wikipedia.org/wiki/RSA_(cryptosystem)) in the `Signing Messages` section.
 
 ## Offline 2 (Malware)
-- [Problem Specification](Offline_2\Specifications%20and%20provided%20materials)
-- [Solution](Offline_2\solutions)
-- [Report](Offline_2\report)
+- [Problem Specification](https://github.com/fardinanam/CSE406-Computer-Security/tree/master/Offline_2/Specifications%20and%20provided%20materials)
+- [Solution](https://github.com/fardinanam/CSE406-Computer-Security/tree/master/Offline_2/solutions)
+- [Report](https://github.com/fardinanam/CSE406-Computer-Security/tree/master/Offline_2/report)
 
 ## Online 2 (Firewall)
-- [Problem Specification](Online_2\firewall-online-B1.pdf)
-- [Solution](Online_2\solution.txt)
+- [Problem Specification](https://github.com/fardinanam/CSE406-Computer-Security/blob/master/Online_2/firewall-online-B1.pdf)
+- [Solution](https://github.com/fardinanam/CSE406-Computer-Security/blob/master/Online_2/solution.txt)
