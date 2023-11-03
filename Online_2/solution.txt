@@ -1,0 +1,43 @@
+#router
+
+iptables -A FORWARD -i eth0 -o eth1 -p tcp --dport 23 -j ACCEPT
+iptables -A FORWARD -i eth1 -o eth0 -p tcp --sport 23 -j ACCEPT
+
+iptables -A FORWARD -p tcp -s 192.168.60.7 -d 10.9.0.5 --dport 23 -j ACCEPT
+iptables -A FORWARD -p tcp -s 10.9.0.5 -d 192.168.60.7 --sport 23 -j ACCEPT
+
+iptables -A FORWARD -p tcp --dport 23 -j DROP
+
+iptables -A FORWARD -i eth1 -o eth0 -p icmp --icmp-type echo-request -j ACCEPT
+iptables -A FORWARD -i eth0 -o eth1 -p icmp --icmp-type echo-reply -j ACCEPT
+
+iptables -A INPUT -s 10.9.0.5 -p icmp --icmp-type echo-request -j ACCEPT
+iptables -A OUTPUT -d 10.9.0.5 -p icmp --icmp-type echo-reply -j ACCEPT
+
+iptables -A FORWARD -s 10.9.0.5 -d 192.168.60.5 -p icmp --icmp-type echo-request -j ACCEPT
+iptables -A FORWARD -s 192.168.60.5 -d 10.9.0.5 -p icmp --icmp-type echo-reply -j ACCEPT
+
+iptables -A FORWARD -i eth0 -o eth1 -s 10.9.0.5 -p icmp --icmp-type echo-request -j DROP
+
+iptables -P OUTPUT ACCEPT
+iptables -P INPUT ACCEPT
+iptables -P FORWARD ACCEPT
+
+
+# internal machines
+iptables -A OUTPUT -p tcp -d 192.168.60.0/24 --dport 23 -j DROP
+iptables -A INPUT -p tcp -s 192.168.60.0/24 --sport 23 -j DROP
+
+iptables -A INPUT -s 192.168.60.0/24 -p icmp --icmp-type echo-request -j DROP
+
+iptables -P OUTPUT ACCEPT
+iptables -P INPUT ACCEPT
+iptables -P FORWARD ACCEPT
+
+# external machines
+iptables -A OUTPUT -p tcp -d 10.9.0.0/24 --dport 23 -j DROP
+iptables -A INPUT -p tcp -s 10.9.0.0/24 --sport 23 -j DROP
+
+iptables -P OUTPUT ACCEPT
+iptables -P INPUT ACCEPT
+iptables -P FORWARD ACCEPT

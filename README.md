@@ -24,3 +24,7 @@ run [server.py](Offline_1/solutions/server.py) and [client.py](Offline_1/solutio
 - [Problem Specification](Offline_2\Specifications%20and%20provided%20materials)
 - [Solution](Offline_2\solutions)
 - [Report](Offline_2\report)
+
+## Online 2 (Firewall)
+- [Problem Specification](Online_2\firewall-online-B1.pdf)
+- [Solution](Online_2\solution.txt)
